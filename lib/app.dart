@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:situp/services/camera_service.dart';
+import 'package:situp/viewmodel/camera_viewmodel.dart';
 import 'services/auth_service.dart';
-import 'services/camera_service.dart';
 import 'viewmodel/auth_viewmodel.dart';
-import 'viewmodel/camera_viewmodel.dart';
 import 'view/login_screen.dart';
 import 'view/home_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'services/mock_posture_backend.dart';
 
 class SitUpApp extends StatelessWidget {
   const SitUpApp({super.key});
@@ -16,7 +17,13 @@ class SitUpApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthViewModel(AuthService())),
-        ChangeNotifierProvider(create: (_) => CameraViewModel(CameraService())),
+        Provider(create: (_) => MockPostureBackend()),
+        ChangeNotifierProvider(
+          create: (ctx) => CameraViewModel(
+            CameraService(),
+            ctx.read<MockPostureBackend>(),
+          ),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

@@ -18,7 +18,7 @@ class CameraService {
             orElse: () => cameras.first,
           );
 
-    final preset = kIsWeb ? ResolutionPreset.medium : ResolutionPreset.veryHigh;
+    final preset = ResolutionPreset.veryHigh;
 
     _controller = CameraController(
       selectedCamera,
@@ -29,6 +29,19 @@ class CameraService {
     await _controller!.initialize();
   }
 
+  // Take a picture on a set interval to send to the CV model
+  Future<XFile?> takePicture() async {
+    if (_controller == null || !_controller!.value.isInitialized) {
+      return null;
+    }
+
+    try {
+      return await _controller!.takePicture();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   CameraController? get controller => _controller;
 
   Future<void> dispose() async {
@@ -36,3 +49,7 @@ class CameraService {
     _controller = null;
   }
 }
+
+
+
+
