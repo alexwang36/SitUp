@@ -1,12 +1,12 @@
-# situp
-
-SitUp is a posture monitoring application that uses your camera and a backend computer vision model to analyze posture in real time. 
-It integrates with an automated standing desk, adjusting desk height dynamically to optimize your posture without feeling disruptive.
-I think possible ideas we could explore are: detailed session analysis; saving historical session results; interactive graph that shows the change in posture score across a single session; gamification such as leaderboard, posture score over time, badges, etc. for better user experience. Of course this depends on the time we have (at the moment uncertain). 
-
+# SitUp
+SitUp is a posture monitoring application that uses your camera and a backend computer vision model to analyze posture in real time. <br>
+It integrates with an automated standing desk, adjusting desk height dynamically to optimize your posture without feeling disruptive. <br>
+<br>
+I think possible ideas we could explore are: detailed session analysis; saving historical session results; interactive graph that shows the change in posture score across a single session; gamification such as leaderboard, posture score over time, badges, etc. for better user experience. Of course this depends on the time we have (at the moment uncertain). <br>
+Other ideas (subject to the time we have and requirements): only display grade/score once in a preset interval. However, we actually take multiple photos within that timeframe and average the score, to get a better calculation; Detect when the user is out of focus or changes orientation. Dont count this for the grade/score, dont include it in an average score across session, and dont include in a score across time feature (ex: graph) if include this feature
+<br>
 
 ## Getting Started
-
 Make sure you have the Flutter SDK installed. SitUp works with either a mobile camera or a webcam. However, this app was originally designed with a mobile camera in mind, because it forces you to forgo a work/study distraction.
 
 After cloning the repository, fetch Flutter dependencies with "flutter pub get". 
