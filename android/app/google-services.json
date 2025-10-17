@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "367896041087",
+    "project_id": "situp-127fa",
+    "storage_bucket": "situp-127fa.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:367896041087:android:53ea8b767b86a72366914a",
+        "android_client_info": {
+          "package_name": "com.example.situp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBW85o1qf03-Mq33ziBiRYFaPFTBgn_pF0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
