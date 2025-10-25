@@ -8,6 +8,7 @@ import 'viewmodel/auth_viewmodel.dart';
 import 'view/login_screen.dart';
 import 'view/home_screen.dart';
 import 'services/mock_posture_backend.dart';
+import 'services/database_service.dart';
 
 class SitUpApp extends StatelessWidget {
   const SitUpApp({super.key});
@@ -22,6 +23,7 @@ class SitUpApp extends StatelessWidget {
           create: (ctx) => CameraViewModel(
             CameraService(),
             ctx.read<MockPostureBackend>(),
+            DatabaseService(),
           ),
         ),
       ],
