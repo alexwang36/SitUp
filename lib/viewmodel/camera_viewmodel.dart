@@ -11,6 +11,7 @@ class CameraViewModel extends ChangeNotifier {
   final PostureApiService _postureApiService;
 
   CameraController? _cameraController;
+  bool _isSessionActive = false;
   bool _isLoading = false;
   String? _errorMessage;
   String? _postureStatus;
@@ -19,6 +20,7 @@ class CameraViewModel extends ChangeNotifier {
   CameraViewModel(this._cameraService, this._postureApiService);
 
   CameraController? get cameraController => _cameraController;
+  bool get isSessionActive => _isSessionActive;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   String? get postureStatus => _postureStatus;
@@ -29,9 +31,6 @@ class CameraViewModel extends ChangeNotifier {
       await _cameraService.initialize();
       _cameraController = _cameraService.controller;
       _errorMessage = null;
-
-      _timer?.cancel();
-      _timer = Timer.periodic(captureInterval, (_) => _captureAndSend());
     } catch (e) {
       _errorMessage = 'error: $e';
     } finally {
@@ -39,9 +38,35 @@ class CameraViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> captureNowAndSend() async => _captureAndSend();
+  Future<void> startSession() async {
+    _isSessionActive = true;
+    
+    _timer?.cancel();
+    _timer = Timer.periodic(captureInterval, (_) => _captureAndSend());
+    
+    notifyListeners();
+    print('Session started');
+  }
+
+  Future<void> stopSession() async {
+    _isSessionActive = false;
+
+    _timer?.cancel();
+    _postureStatus = null;
+
+    notifyListeners();
+    print('Session stopped');
+  }
+
+  Future<void> captureNowAndSend() async {
+    return _captureAndSend();
+  }
 
   Future<void> _captureAndSend() async {
+    if (!_isSessionActive) {
+      return;
+    }
+
     try {
       final file = await _cameraService.takePicture();
 
@@ -49,7 +74,7 @@ class CameraViewModel extends ChangeNotifier {
         print('takePicture() returned null');
         return;
       }
-    
+
       final result = await _postureApiService.sendImageFile(file.path);
     _postureStatus = result.grade.name; 
       print('successsfully sent image file to backend');
@@ -78,4 +103,3 @@ class CameraViewModel extends ChangeNotifier {
     super.dispose();
   }
 }
-

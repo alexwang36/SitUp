@@ -36,7 +36,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (vm.errorMessage != null) {
       return Scaffold(
-        body: Center(child: Text(vm.errorMessage!, style: const TextStyle(color: Colors.red))),
+        body: Center(
+          child: Text(
+            vm.errorMessage!,
+            style: const TextStyle(color: Colors.red),
+          ),
+        ),
       );
     }
 
@@ -45,45 +50,84 @@ class _HomeScreenState extends State<HomeScreen> {
       return const Scaffold(body: Center(child: Text('Camera not available')));
     }
 
+    const double overlayFontSize = 20;
+
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(title: const Text('Camera')),
-      body: Stack(
+      body: Column(
         children: [
-          Center(
-            child: Container(
-              margin: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.black,
-                border: Border.all(color: Colors.white, width: 3),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 8, offset: Offset(0,4))],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: AspectRatio(
-                  aspectRatio: controller.value.aspectRatio,
-                  child: CameraPreview(controller),
+          Expanded(
+            child: Center(
+              child: Container(
+                margin: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Stack(
+                    alignment: Alignment.bottomCenter,
+                    children: [
+                      AspectRatio(
+                        aspectRatio: controller.value.aspectRatio,
+                        child: Stack(
+                          children: [
+                            CameraPreview(controller),
+                            if (!vm.isSessionActive)
+                              Container(color: Colors.black.withOpacity(0.6)),
+                          ],
+                        ),
+                      ),
+
+                      if (vm.isSessionActive)
+                        Positioned(
+                          bottom: 60,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.6),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              vm.postureStatus ?? 'Analyzing posture',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: overlayFontSize,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
 
-          Positioned(
-            bottom: 36,
-            left: 16,
-            right: 16,
-            child: Center(
-              child: Container(
+          Container(
+            width: 200,
+            margin: const EdgeInsets.only(bottom: 24),
+            child: ElevatedButton(
+              onPressed: () {
+                if (vm.isSessionActive) {
+                  vm.stopSession();
+                } else {
+                  vm.startSession();
+                }
+              },
+              style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.6),
-                  borderRadius: BorderRadius.circular(20),
+                backgroundColor: vm.isSessionActive ? Colors.red : Colors.green,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
                 ),
-                child: Text(
-                  vm.postureStatus ?? 'Analyzing posture',
-                  style: const TextStyle(color: Colors.white, fontSize: 22),
-                ),
+              ),
+              child: Text(
+                vm.isSessionActive ? 'Stop Session' : 'Start Session',
+                style: const TextStyle(fontSize: overlayFontSize, color: Colors.white),
               ),
             ),
           ),
