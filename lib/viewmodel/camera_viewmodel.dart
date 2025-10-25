@@ -3,21 +3,25 @@ import 'package:flutter/foundation.dart';
 import 'package:camera/camera.dart';
 import 'package:situp/services/posture_api_service.dart';
 import '../services/camera_service.dart';
+import '../services/database_service.dart';
+
 
 class CameraViewModel extends ChangeNotifier {
-  static const Duration captureInterval = Duration(seconds: 30);
+  static const Duration captureInterval = Duration(seconds: 6);
 
   final CameraService _cameraService;
   final PostureApiService _postureApiService;
+  final DatabaseService _databaseService;
 
   CameraController? _cameraController;
   bool _isSessionActive = false;
+  String? _sessionId;
   bool _isLoading = false;
   String? _errorMessage;
   String? _postureStatus;
   Timer? _timer;
 
-  CameraViewModel(this._cameraService, this._postureApiService);
+  CameraViewModel(this._cameraService, this._postureApiService, this._databaseService);
 
   CameraController? get cameraController => _cameraController;
   bool get isSessionActive => _isSessionActive;
@@ -39,17 +43,25 @@ class CameraViewModel extends ChangeNotifier {
   }
 
   Future<void> startSession() async {
-    _isSessionActive = true;
-    
-    _timer?.cancel();
-    _timer = Timer.periodic(captureInterval, (_) => _captureAndSend());
-    
-    notifyListeners();
-    print('Session started');
+    try {
+      _sessionId = await _databaseService.startNewSession();
+      _isSessionActive = true;
+      
+      _timer?.cancel();
+      _timer = Timer.periodic(captureInterval, (_) => _captureAndSend());
+      
+      notifyListeners();
+      print('Session started and started capturing data for the session');
+    } catch (e) {
+      _errorMessage = '$e';
+      print('Error starting session: $e');
+      notifyListeners();
+    }
   }
 
   Future<void> stopSession() async {
     _isSessionActive = false;
+    _sessionId = null;
 
     _timer?.cancel();
     _postureStatus = null;
@@ -63,7 +75,7 @@ class CameraViewModel extends ChangeNotifier {
   }
 
   Future<void> _captureAndSend() async {
-    if (!_isSessionActive) {
+    if (!_isSessionActive || _sessionId == null) {
       return;
     }
 
@@ -76,7 +88,9 @@ class CameraViewModel extends ChangeNotifier {
       }
 
       final result = await _postureApiService.sendImageFile(file.path);
-    _postureStatus = result.grade.name; 
+      _postureStatus = result.grade.name; 
+      await _databaseService.addPostureDataPoint(_sessionId!, result);
+
       print('successsfully sent image file to backend');
       notifyListeners();
     } catch (e) {
