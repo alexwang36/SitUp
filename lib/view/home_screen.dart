@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:camera/camera.dart';
 import '../viewmodel/camera_viewmodel.dart';
+import 'pose_test_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -54,7 +55,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       backgroundColor: Colors.grey[200],
-      appBar: AppBar(title: const Text('Camera')),
+      appBar: AppBar(
+        title: const Text('Camera'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.bug_report),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const PoseTestScreen()),
+              );
+            },
+            tooltip: 'Pose Detection Test',
+          ),
+        ],
+      ),
       body: Column(
         children: [
           Expanded(
@@ -85,7 +100,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         Positioned(
                           bottom: 60,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 10,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.black.withOpacity(0.6),
                               borderRadius: BorderRadius.circular(20),
@@ -119,7 +137,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 }
               },
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 backgroundColor: vm.isSessionActive ? Colors.red : Colors.green,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
@@ -127,7 +148,10 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               child: Text(
                 vm.isSessionActive ? 'Stop Session' : 'Start Session',
-                style: const TextStyle(fontSize: overlayFontSize, color: Colors.white),
+                style: const TextStyle(
+                  fontSize: overlayFontSize,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
