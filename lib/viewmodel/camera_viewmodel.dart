@@ -20,6 +20,8 @@ class CameraViewModel extends ChangeNotifier {
   String? _errorMessage;
   String? _postureStatus;
   Timer? _timer;
+  double? latestScore;
+  double? latestConfidence;
 
   CameraViewModel(this._cameraService, this._postureApiService, this._databaseService);
 
@@ -62,10 +64,10 @@ class CameraViewModel extends ChangeNotifier {
   Future<void> stopSession() async {
     _isSessionActive = false;
     _sessionId = null;
-
     _timer?.cancel();
     _postureStatus = null;
-
+    latestScore = null;
+    latestConfidence = null;
     notifyListeners();
     print('Session stopped');
   }
@@ -89,6 +91,8 @@ class CameraViewModel extends ChangeNotifier {
 
       final result = await _postureApiService.sendImageFile(file.path);
       _postureStatus = result.grade.name; 
+      latestScore = result.postureScore;
+      latestConfidence = result.confidence; 
       await _databaseService.addPostureDataPoint(_sessionId!, result);
 
       print('successsfully sent image file to backend');
