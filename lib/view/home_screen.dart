@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:camera/camera.dart';
 import '../viewmodel/camera_viewmodel.dart';
+import 'view_sessions_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -106,6 +107,18 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Text(
+              'Score: ${vm.latestScore?.toStringAsFixed(1) ?? '--'}   '
+              'Conf: ${(vm.latestConfidence != null ? (vm.latestConfidence! * 100).toStringAsFixed(0) : '--')}%',
+              style: const TextStyle(
+                color: Colors.black87,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
 
           Container(
             width: 200,
@@ -129,6 +142,24 @@ class _HomeScreenState extends State<HomeScreen> {
                 vm.isSessionActive ? 'Stop Session' : 'Start Session',
                 style: const TextStyle(fontSize: overlayFontSize, color: Colors.white),
               ),
+            ),
+          ),
+          Container(
+            width: 200,
+            margin: const EdgeInsets.only(bottom: 40),
+            child: OutlinedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ViewSessionsScreen()),
+                );
+              },
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                side: const BorderSide(color: Colors.blue),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+              ),
+              child: const Text('View Past Sessions'),
             ),
           ),
         ],
